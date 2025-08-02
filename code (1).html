@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colegio Responde</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f9ff;
+        }
+        
+        .wave-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="%230075b3"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60-41.34,6-7.44,23-29.07,35-43.13s25.22-25.59,45-35.1C971.29,0,953.64,0,936,0V0Z" opacity=".5" fill="%23007bff"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="%230075b3"/></svg>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        
+        .message-card {
+            transition: all 0.3s ease;
+        }
+        
+        .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .badge-anonimo {
+            background-color: #6c757d;
+        }
+        
+        .badge-nombre {
+            background-color: #007bff;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="wave-bg"></div>
+    
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <div class="flex justify-center mb-4">
+                <img src="https://placehold.co/100x100" alt="Logo del Colegio Responde con un diseño moderno y minimalista, mostrando un ícono de mensajes dentro de un círculo azul" class="w-20 h-20 rounded-full border-4 border-white shadow-lg">
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-800 mb-2">Colegio Responde</h1>
+            <p class="text-lg text-blue-600">Tu espacio seguro para compartir</p>
+        </header>
+        
+        <!-- Login Section -->
+        <div id="loginSection" class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8">
+            <h2 class="text-xl font-semibold text-blue-800 mb-4">Acceso</h2>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="accessCode">
+                    Código de Acceso
+                </label>
+                <input id="accessCode" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" type="password" placeholder="Ingresa tu código">
+                <p class="text-xs text-gray-500 mt-1">Ejemplo: EST_2025 para estudiantes</p>
+            </div>
+            <button onclick="verifyAccess()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-200">
+                Ingresar
+            </button>
+        </div>
+        
+        <!-- Student Section (Initially Hidden) -->
+        <div id="studentSection" class="hidden">
+            <div class="max-w-4xl mx-auto">
+                <!-- Message Form -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-800 mb-4">Envíanos tu mensaje</h2>
+                    <form id="messageForm">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="messageType">
+                                Tipo de Mensaje
+                            </label>
+                            <select id="messageType" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500">
+                                <option value="problema_personal">Problema Personal</option>
+                                <option value="problema_familiar">Problema Familiar</option>
+                                <option value="problema_educativo">Problema Educativo</option>
+                                <option value="sugerencia">Sugerencia</option>
+                                <option value="otro">Otro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="flex items-center space-x-4 mb-2">
+                                <div class="flex items-center">
+                                    <input id="anonimo" name="anonimato" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500" checked>
+                                    <label for="anonimo" class="ml-2 block text-sm text-gray-700">Anónimo</label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input id="conNombre" name="anonimato" type="radio" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                                    <label for="conNombre" class="ml-2 block text-sm text-gray-700">Con mi nombre</label>
+                                </div>
+                            </div>
+                            <div id="nameField" class="hidden">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="studentName">
+                                    Tu Nombre (Opcional)
+                                </label>
+                                <input id="studentName" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" type="text" placeholder="Puedes usar tu nombre o seudónimo">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="messageContent">
+                                Tu Mensaje
+                            </label>
+                            <textarea id="messageContent" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="Describe tu problema, sugerencia o inquietud..."></textarea>
+                        </div>
+                        
+                        <button type="button" onclick="sendMessage()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-200">
+                            Enviar Mensaje
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Messages List -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h2 class="text-xl font-semibold text-blue-800 mb-4">Tus Mensajes</h2>
+                    <div id="messagesList" class="space-y-4">
+                        <!-- Mensajes se cargarán aquí dinámicamente -->
+                        <p class="text-gray-500 text-center py-4">No tienes mensajes aún. Envía tu primer mensaje usando el formulario.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin Section (Initially Hidden) -->
+        <div id="adminSection" class="hidden">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">Panel de Administración</h2>
+                
+                <!-- Search and Filter -->
+                <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="searchMessages">
+                                Buscar Mensajes
+                            </label>
+                            <input id="searchMessages" type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500" placeholder="Buscar por contenido, tipo, etc.">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="filterStatus">
+                                Filtrar por Estado
+                            </label>
+                            <select id="filterStatus" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500">
+                                <option value="all">Todos</option>
+                                <option value="pending">Sin responder</option>
+                                <option value="answered">Respondidos</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Messages Dashboard -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-blue-800">Todos los Mensajes</h3>
+                        <div class="text-sm text-gray-500">
+                            <span id="totalMessages">0</span> mensajes en total
+                        </div>
+                    </div>
+                    
+                    <div id="adminMessagesList" class="space-y-4">
+                        <!-- Mensajes de administración se cargarán aquí -->
+                        <p class="text-gray-500 text-center py-8">No hay mensajes aún. Los mensajes aparecerán aquí cuando los estudiantes los envíen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="bg-blue-800 text-white py-6 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p>Colegio Responde - Un espacio seguro para la comunidad estudiantil</p>
+            <p class="text-sm mt-2 text-blue-200">© 2023 Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        // Variables globales
+        let messages = JSON.parse(localStorage.getItem('colegioRespondeMessages')) || [];
+        let currentUser = null;
+        
+        // Tipos de mensaje con íconos
+        const messageTypes = {
+            "problema_personal": {name: "Problema Personal", icon: "🧠", color: "bg-red-100 text-red-800"},
+            "problema_familiar": {name: "Problema Familiar", icon: "👪", color: "bg-purple-100 text-purple-800"},
+            "problema_educativo": {name: "Problema Educativo", icon: "📚", color: "bg-blue-100 text-blue-800"},
+            "sugerencia": {name: "Sugerencia", icon: "💡", color: "bg-yellow-100 text-yellow-800"},
+            "otro": {name: "Otro", color: "bg-gray-100 text-gray-800"}
+        };
+        
+        // Verificar código de acceso
+        function verifyAccess() {
+            const accessCode = document.getElementById('accessCode').value.trim();
+            
+            if (accessCode === "EST_2025") {
+                currentUser = {role: "student", id: "student_" + Date.now()};
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('studentSection').classList.remove('hidden');
+                loadStudentMessages();
+            } else if (accessCode === "ADMIN_2025") {
+                currentUser = {role: "admin", id: "admin"};
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('adminSection').classList.remove('hidden');
+                loadAllMessages();
+            } else {
+                alert("Código de acceso incorrecto. Inténtalo de nuevo.");
+            }
+        }
+        
+        // Manejar cambio entre anónimo y con nombre
+        document.querySelectorAll('input[name="anonimato"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('nameField').classList.toggle('hidden', this.id !== 'conNombre');
+            });
+        });
+        
+        // Enviar un nuevo mensaje
+        function sendMessage() {
+            const messageType = document.getElementById('messageType').value;
+            const isAnonymous = document.getElementById('anonimo').checked;
+            const studentName = document.getElementById('studentName').value;
+            const messageContent = document.getElementById('messageContent').value.trim();
+            
+            if (!messageContent) {
+                alert("Por favor escribe tu mensaje antes de enviar.");
+                return;
+            }
+            
+            const newMessage = {
+                id: "msg_" + Date.now(),
+                studentId: currentUser.id,
+                type: messageType,
+                content: messageContent,
+                isAnonymous: isAnonymous,
+                studentName: isAnonymous ? null : (studentName || "Estudiante"),
+                date: new Date().toISOString(),
+                responses: []
+            };
+            
+            messages.push(newMessage);
+            saveMessages();
+            loadStudentMessages();
+            
+            // Reset form
+            document.getElementById('messageContent').value = '';
+            if (!document.getElementById('anonimo').checked) {
+                document.getElementById('anonimo').click();
+            }
+            
+            // Mostrar confirmación
+            alert("Tu mensaje ha sido enviado exitosamente. Recibirás una respuesta pronto.");
+        }
+        
+        // Responder un mensaje (admin)
+        function replyToMessage(messageId) {
+            const replyContent = document.getElementById(`replyContent_${messageId}`).value.trim();
+            
+            if (!replyContent) {
+                alert("Por favor escribe tu respuesta antes de enviar.");
+                return;
+            }
+            
+            const message = messages.find(msg => msg.id === messageId);
+            if (message) {
+                message.responses.push({
+                    id: "resp_" + Date.now(),
+                    content: replyContent,
+                    date: new Date().toISOString(),
+                    adminName: "Administración"
+                });
+                
+                saveMessages();
+                loadAllMessages();
+                
+                // Limpiar el área de respuesta
+                document.getElementById(`replyContent_${messageId}`).value = '';
+            }
+        }
+        
+        // Cargar mensajes del estudiante
+        function loadStudentMessages() {
+            const messagesList = document.getElementById('messagesList');
+            const studentMessages = messages.filter(msg => msg.studentId === currentUser.id);
+            
+            if (studentMessages.length === 0) {
+                messagesList.innerHTML = '<p class="text-gray-500 text-center py-4">No tienes mensajes aún. Envía tu primer mensaje usando el formulario.</p>';
+                return;
+            }
+            
+            messagesList.innerHTML = '';
+            
+            studentMessages.forEach(msg => {
+                const messageType = messageTypes[msg.type] || messageTypes["otro"];
+                
+                const messageCard = document.createElement('div');
+                messageCard.className = 'message-card bg-white rounded-lg border border-gray-200 p-4';
+                
+                messageCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${messageType.color}">
+                            ${messageType.name}
+                        </span>
+                        <span class="text-xs text-gray-500">${formatDate(msg.date)}</span>
+                    </div>
+                    <div class="mb-3">
+                        <p class="text-gray-700">${msg.content}</p>
+                    </div>
+                    ${msg.responses.length > 0 ? `
+                        <div class="bg-blue-50 rounded-lg p-3 mb-2">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-semibold text-blue-800">Respuesta de la Administración</span>
+                                <span class="text-xs text-gray-500">${formatDate(msg.responses[0].date)}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm">${msg.responses[0].content}</p>
+                        </div>
+                    ` : `
+                        <div class="bg-yellow-50 rounded-lg p-3 text-center">
+                            <p class="text-yellow-700 text-sm">Tu mensaje aún no ha sido respondido</p>
+                        </div>
+                    `}
+                `;
+                
+                messagesList.appendChild(messageCard);
+            });
+        }
+        
+        // Cargar todos los mensajes (admin)
+        function loadAllMessages() {
+            const messagesList = document.getElementById('adminMessagesList');
+            const totalMessagesElement = document.getElementById('totalMessages');
+            
+            totalMessagesElement.textContent = messages.length;
+            
+            if (messages.length === 0) {
+                messagesList.innerHTML = '<p class="text-gray-500 text-center py-8">No hay mensajes aún. Los mensajes aparecerán aquí cuando los estudiantes los envíen.</p>';
+                return;
+            }
+            
+            messagesList.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const messageType = messageTypes[msg.type] || messageTypes["otro"];
+                
+                const messageCard = document.createElement('div');
+                messageCard.className = 'message-card bg-white rounded-lg border border-gray-200 p-4';
+                
+                messageCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="flex space-x-2">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${messageType.color}">
+                                ${messageType.name}
+                            </span>
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold ${msg.isAnonymous ? 'badge-anonimo text-white' : 'badge-nombre text-white'}">
+                                ${msg.isAnonymous ? 'Anónimo' : msg.studentName}
+                            </span>
+                        </div>
+                        <span class="text-xs text-gray-500">${formatDate(msg.date)}</span>
+                    </div>
+                    <div class="mb-3">
+                        <p class="text-gray-700">${msg.content}</p>
+                    </div>
+                    
+                    ${msg.responses.length > 0 ? `
+                        <div class="bg-blue-50 rounded-lg p-3 mb-3">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-semibold text-blue-800">Respuesta:</span>
+                                <span class="text-xs text-gray-500">${formatDate(msg.responses[0].date)}</span>
+                            </div>
+                            <p class="text-gray-700 text-sm">${msg.responses[0].content}</p>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="mt-3 border-t pt-3">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="replyContent_${msg.id}">
+                            ${msg.responses.length > 0 ? 'Modificar respuesta' : 'Responder'}
+                        </label>
+                        <textarea id="replyContent_${msg.id}" rows="2" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500 mb-2" placeholder="Escribe tu respuesta aquí...">${msg.responses.length > 0 ? msg.responses[0].content : ''}</textarea>
+                        <button onclick="replyToMessage('${msg.id}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline text-sm transition duration-200">
+                            ${msg.responses.length > 0 ? 'Actualizar' : 'Enviar'} Respuesta
+                        </button>
+                    </div>
+                `;
+                
+                messagesList.appendChild(messageCard);
+            });
+        }
+        
+        // Guardar mensajes en localStorage
+        function saveMessages() {
+            localStorage.setItem('colegioRespondeMessages', JSON.stringify(messages));
+        }
+        
+        // Formatear fecha legible
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleDateString('es-ES', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Event listeners para filtros de administrador
+        document.getElementById('searchMessages').addEventListener('input', function() {
+            // Implementar búsqueda si hay tiempo
+        });
+        
+        document.getElementById('filterStatus').addEventListener('change', function() {
+            // Implementar filtrado si hay tiempo
+        });
+    </script>
+</body>
+</html>
